@@ -14,6 +14,7 @@ class MainPage(webapp2.RequestHandler):
     def get(self):
         data = {
             'name': 'Edward',
+            'd': {'foo': 'b<p style="color:red">ar</p>'},
             }
         html = self.jinja2.render_template('index.html', **data)
         self.response.headers['Content-Type'] = 'text/html'
