@@ -4,9 +4,9 @@ threadsafe: true
 
 default_expiration: 2m
 
-#libraries:
-#- name: jinja2
-#  version: "2.6"
+libraries:
+- name: ujson
+  version: "1.35"
 
 handlers:
 - url: /apis/(doc|swagger.json)
