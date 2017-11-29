@@ -2,10 +2,15 @@ runtime: python27
 api_version: 1
 threadsafe: true
 
+default_expiration: 2m
+
 #libraries:
 #- name: jinja2
 #  version: "2.6"
 
 handlers:
+- url: /js
+  static_dir: static/js
+
 - url: /.*
   script: main.app
