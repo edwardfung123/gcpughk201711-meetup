@@ -9,6 +9,21 @@ default_expiration: 2m
 #  version: "2.6"
 
 handlers:
+- url: /apis/(doc|swagger.json)
+  script: apis.users.app
+  login: admin
+
+- url: /apis/(users)/(.*)
+  script: apis.\1.app
+
+# to be more precise..
+#- url: /apis/(users|posts|images)
+- url: /apis/(.*)
+  script: apis.\1.app
+
+- url: /swaggerui
+  static_dir: swaggerui
+
 - url: /js
   static_dir: static/js
 
