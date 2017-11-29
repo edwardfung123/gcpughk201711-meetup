@@ -8,6 +8,10 @@ class User(ndb.Model):
   ctime = ndb.DateTimeProperty(auto_now_add=True)
   mtime = ndb.DateTimeProperty(auto_now=True)
   name = ndb.StringProperty(required=True, indexed=True)
+  followers = ndb.IntegerProperty(required=True, indexed=True, default=0)
+  profile_pic_url_raw = ndb.StringProperty(indexed=False)
+  profile_pic_url = ndb.StringProperty(indexed=False)
+  profile_pic_blob_key = ndb.BlobKeyProperty()
 
 
   def to_dict(self, *args, **kwargs):

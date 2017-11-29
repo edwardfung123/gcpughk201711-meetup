@@ -28,6 +28,8 @@ paginaton_model = api.model('PaginationModel', {
 ig_user_resp_model = api.model('IgUserRespModel', {
   'name': fields.String(required=True, description='IG Username', example='nike'),
   'id': fields.Integer,
+  'followers': fields.Integer,
+  'profile_pic_url': fields.String,
   })
 
 ig_user_list_resp_model = api.model('IgUserListRespModel', {
@@ -122,6 +124,48 @@ class FetchIgUser(Resource):
       abort(400, 'The user is a private account!')
     except MissingIgUser:
       abort(400, 'The user does not exist in IG actually!')
+    is_dirty = False
+    if user.followers != profile['followed_by']['count']:
+      user.followers = profile['followed_by']['count']
+      is_dirty = True
+    if profile['profile_pic_url_hd'] != user.profile_pic_url_raw:
+      is_dirty = True
+      user.profile_pic_url_raw = profile['profile_pic_url_hd']
+      from google.appengine.api import urlfetch
+      img_result = urlfetch.fetch(user.profile_pic_url_raw)
+      if img_result.status_code == 200:
+        img_content = img_result.content
+      else:
+        abort(400, 'Failed to download image')
+      from google.appengine.api import images
+      google_img = images.Image(img_content)
+      if google_img.format == images.JPEG:
+        content_type = 'image/jpeg'
+        file_name = username + '.jpg'
+      elif google_img.format == images.PNG:
+        content_type = 'image/png'
+        file_name = username + '.png'
+      else:
+        content_type = None
+        file_name = username
+      import cloudstorage as gcs
+      from google.appengine.api import app_identity
+      import os
+      bucket_name = os.environ.get('BUCKET_NAME',
+          app_identity.get_default_gcs_bucket_name())
+      gcs_path = '/{bucket_name}/profile/{file_name}'.format(bucket_name=bucket_name,
+          file_name=file_name)
+      gcs_file = gcs.open(gcs_path, mode='w', content_type=content_type)
+      gcs_file.write(img_content)
+      gcs_file.close()
+
+      from google.appengine.ext import blobstore
+      blob_key = blobstore.create_gs_key('/gs'+gcs_path)
+      url = images.get_serving_url(blob_key, secure_url=True)
+      user.profile_pic_blob_key = blobstore.BlobKey(blob_key)
+      user.profile_pic_url = url
+    if is_dirty:
+      user.put()
     return profile
 
 
