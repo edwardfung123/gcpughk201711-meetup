@@ -26,6 +26,14 @@ def getHomeUrl(username):
 
 def fetchHomePage(username):
   ''' Return the homepage HTML content of a user '''
+  from google.appengine.api import memcache
+  mkey = username
+  homepage_content = memcache.get(key=mkey, namespace='ig-homepage')
+  if homepage_content is not None:
+    logging.debug('Cache hit!')
+    return homepage_content
+
+  logging.debug('cache miss')
   url = getHomeUrl(username)
   from google.appengine.api import urlfetch
   try:
@@ -37,6 +45,12 @@ def fetchHomePage(username):
       if result.status_code == 200:
         logging.debug('fetch the homepage')
         c = result.content
+        # write to memcache
+        added = memcache.set(key=mkey, value=c, time=60 * 60 * 24, namespace='ig-homepage')
+        if not added:
+          logging.error('Failed to cache the homepage')
+          import sys
+          logging.debug('Size = {} kb'.format(sys.getsizeof(c) / 1024))
         return c
       elif result.status_code == 404:
         e = HTTPNotFound('The account does not exist.')
