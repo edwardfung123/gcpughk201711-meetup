@@ -106,6 +106,25 @@ class GetUpdateDeleteUser(Resource):
     return None
 
 
+@api.route('/users/<username>/fetch')
+class FetchIgUser(Resource):
+
+  def get(self, username):
+    logging.debug(username)
+    user = get_user(username)
+    if user is None:
+      logging.debug('not found')
+      abort(404, 'User not found')
+    from utils.ig import fetchProfile, MissingIgUser, PrivateIgUser
+    try:
+      profile, sharedData, homepageHtml = fetchProfile(username)
+    except PrivateIgUser:
+      abort(400, 'The user is a private account!')
+    except MissingIgUser:
+      abort(400, 'The user does not exist in IG actually!')
+    return profile
+
+
 app = Flask(__name__)
 app.debug = True
 api.init_app(app)
