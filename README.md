@@ -51,6 +51,10 @@ google-api-python-client
 
 The new command to install the libraries: `pip install -t lib -r requirements.txt --upgrade`
 
+# Next step
+
+The next branch is `features/add-js-css`.
+
 ---
 # Introduction
 
