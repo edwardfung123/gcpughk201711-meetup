@@ -1,59 +1,36 @@
 # Update in this branch
 
-1. in `app.py`, we use `jinja2` to load the template and render it. Please note that it is coupled with `webapp2`.
-2. Since we used `jinja2`, we have to update `app.yaml` to include `jinja2`. The list of 3rd party python library can be found in [here](https://cloud.google.com/appengine/docs/standard/python/tools/built-in-libraries-27)
+## Before we go to the changes...
+\* This based on the result of the previous step.
+It is expected that you are using `jinja2==2.10` which is installed using `pip`. `appengine_config.py` is properly configurated too.
 
-## Using `jinja2` without `webapp2`
-
-Try this
-
-```
-def jinja(self):
-  import jinja2
-  JINJA_ENVIRONMENT = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
-                                       extensions=['jinja2.ext.autoescape', 'jinja2.ext.with_', ],
-                                       autoescape=True)
-
-  return JINJA_ENVIRONMENT
-```
-
-Then, you can do something like this:
+So if you just clone and switch to this branch, you have to:
 
 ```
-jinja().get_template('some_template.html').render(**data)
+mkdir lib
+pip install -r requirements.txt -t lib --upgrade
 ```
 
-## Can I use newer `jinja2`?
-
-Yes. The 3rd party libraries sometimes too old. Use `pip` to install new version or other libraries. As long as the library does not entirely rely on c-modules, it should work. The detail way is listed in [this doc](https://cloud.google.com/appengine/docs/standard/python/tools/using-libraries-python-27)
-
-Here is a summary
-
-1. `mkdir lib` - create a new folder called `lib`. We will install libraries into this folder.
-2. `pip install --upgrade jinja2 -t lib` - this will install the latest version of jinja2 into `lib`.
-3. Create a file named `appengine_config.py` with the following content
-    ```
-	from google.appengine.ext import vendor
-
-	# Add any libraries install in the "lib" folder.
-	vendor.add('lib')
-	```
-4. Remove the conflicting library in `app.yaml`.
-
-
-It is *HIGHLY* recommended to use a `requirements.txt` file to store all the dependencies. E.g.
+then make sure `appengine_config.py` is:
 
 ```
-Flask==0.10
-Markdown==2.5.2
-google-api-python-client
+from google.appengine.ext import vendor
+
+# Add any libraries install in the "lib" folder.
+# uncomment to use `lib` which install the custom jinja2.10
+vendor.add('lib')
 ```
 
-The new command to install the libraries: `pip install -t lib -r requirements.txt --upgrade`
+## Changes
+
+1. We added new route `/js` in `app.yaml`. For detail see comments inside. Basically, it tells AppEngine to put the whole directory in where it serves static content.
+2. Added `static/js/app.js`. Just a js file to be served. In practice, the js files are compiled with tools like `grunt`, `gulp` or `webpack`. Depends on your tools.
+3. Updated the `templates/index.html` to use the `app.js` and jquery.
+
 
 # Next step
 
-The next branch is `features/add-js-css`.
+The next branch is `features/add-api`.
 
 ---
 # Introduction
