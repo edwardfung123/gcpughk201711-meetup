@@ -4,6 +4,7 @@ threadsafe: true
 
 default_expiration: 2m
 
+# Comment the following lines to use jinja2.10 installed from pip
 #libraries:
 #- name: jinja2
 #  version: "2.6"
