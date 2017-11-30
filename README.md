@@ -1,3 +1,57 @@
+# Update in this branch
+
+1. in `app.py`, we use `jinja2` to load the template and render it. Please note that it is coupled with `webapp2`.
+2. Since we used `jinja2`, we have to update `app.yaml` to include `jinja2`. The list of 3rd party python library can be found in [here](https://cloud.google.com/appengine/docs/standard/python/tools/built-in-libraries-27)
+
+## Using `jinja2` without `webapp2`
+
+Try this
+
+```
+def jinja(self):
+  import jinja2
+  JINJA_ENVIRONMENT = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
+                                       extensions=['jinja2.ext.autoescape', 'jinja2.ext.with_', ],
+                                       autoescape=True)
+
+  return JINJA_ENVIRONMENT
+```
+
+Then, you can do something like this:
+
+```
+jinja().get_template('some_template.html').render(**data)
+```
+
+## Can I use newer `jinja2`?
+
+Yes. The 3rd party libraries sometimes too old. Use `pip` to install new version or other libraries. As long as the library does not entirely rely on c-modules, it should work. The detail way is listed in [this doc](https://cloud.google.com/appengine/docs/standard/python/tools/using-libraries-python-27)
+
+Here is a summary
+
+1. `mkdir lib` - create a new folder called `lib`. We will install libraries into this folder.
+2. `pip install --upgrade jinja2 -t lib` - this will install the latest version of jinja2 into `lib`.
+3. Create a file named `appengine_config.py` with the following content
+    ```
+	from google.appengine.ext import vendor
+
+	# Add any libraries install in the "lib" folder.
+	vendor.add('lib')
+	```
+4. Remove the conflicting library in `app.yaml`.
+
+
+It is *HIGHLY* recommended to use a `requirements.txt` file to store all the dependencies. E.g.
+
+```
+Flask==0.10
+Markdown==2.5.2
+google-api-python-client
+```
+
+The new command to install the libraries: `pip install -t lib -r requirements.txt --upgrade`
+
+---
 # Introduction
 
 This is a demo application of Google AppEngine for [the meetup](https://www.eventbrite.com/e/gcpug-meetup-2017nov-tickets-39642814726) of [Google Cloud Platform User Group Hong Kong](https://www.facebook.com/groups/gcpughk/) on 30-Nov-2017.

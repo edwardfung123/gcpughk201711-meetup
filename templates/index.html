@@ -1,11 +1,13 @@
-<!doctype>
+<!doctype html>
 <html>
   <head>
     <title>IG Stalker</title>
   </head>
   <body>
     <h1>Hello, {{ name }}</h1>
-    <pre>{{ d | tojson }}</pre>
+    {# the tojson filter is jinja2.10 only... you cannot use it in jinja2.6. It
+    is good to use it for testing your jinja2 version. #}
+    {#<pre>{{ d | tojson }}</pre> #}
     {# 
     <h1>Hello, IG-Stalker</h1>
     #}

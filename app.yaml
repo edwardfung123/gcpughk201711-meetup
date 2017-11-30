@@ -2,9 +2,10 @@ runtime: python27
 api_version: 1
 threadsafe: true
 
-#libraries:
-#- name: jinja2
-#  version: "2.6"
+# Comment the following lines to use jinja2.10 installed from pip
+libraries:
+- name: jinja2
+  version: "2.6"
 
 handlers:
 - url: /.*
