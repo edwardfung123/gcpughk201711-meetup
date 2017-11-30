@@ -12,6 +12,14 @@ from flask import Flask
 from flask_restplus import Api, Resource, fields, abort
 from models.user import User
 
+
+def is_run_in_taskqueue(request):
+  # Must read this
+  # https://cloud.google.com/appengine/docs/standard/python/taskqueue/push/creating-handlers
+  logging.debug(request.headers)
+  logging.debug(request.remote_addr)
+  return 'X-AppEngine-TaskName' in request.headers and request.remote_addr == '0.1.0.2'
+
 api = Api(doc='/apis/doc', prefix="/apis")
 
 
@@ -118,11 +126,18 @@ class FetchIgUser(Resource):
       logging.debug('not found')
       abort(404, 'User not found')
     from utils.ig import fetchProfile, MissingIgUser, PrivateIgUser
+    from flask import request
     try:
       profile, sharedData, homepageHtml = fetchProfile(username)
     except PrivateIgUser:
+      if is_run_in_taskqueue(request) is True:
+        # avoid task queue retry...
+        return {}
       abort(400, 'The user is a private account!')
     except MissingIgUser:
+      if is_run_in_taskqueue(request) is True:
+        # avoid task queue retry...
+        return {}
       abort(400, 'The user does not exist in IG actually!')
     is_dirty = False
     if user.followers != profile['followed_by']['count']:

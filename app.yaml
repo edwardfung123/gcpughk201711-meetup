@@ -27,5 +27,8 @@ handlers:
 - url: /js
   static_dir: static/js
 
+- url: /tq/(.*)
+  script: tq.\1.app
+
 - url: /.*
   script: main.app
