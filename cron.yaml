@@ -1,0 +1,7 @@
+# see
+# - https://cloud.google.com/appengine/docs/standard/python/config/cron
+# - https://cloud.google.com/appengine/docs/standard/python/config/cronref
+cron:
+- description: refetch the profile daily
+  url: /tq/fetch_all_users
+  schedule: every 24 hours
