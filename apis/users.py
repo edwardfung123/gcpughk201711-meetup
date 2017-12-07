@@ -62,7 +62,7 @@ class CreateListUsers(Resource):
     return {
         'results': [user.to_dict() for user in users],
         'pagination': {
-          'cursor': cursor.urlsafe(),
+          'cursor': cursor.urlsafe() if cursor is not None else None,
           'more': more,
           }
         }
