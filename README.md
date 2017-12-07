@@ -1,6 +1,6 @@
 # Update in this branch
 
-In the last branch we created a few RESTful APIs but the data is stored in memory only. Everytime we updated the code, the `dev_appserver` will be restarted and the data are erased. This is good because it is very similar what happened to new deployment in GAE. When we deploy a new version to GAE, new instances are spawned with *nothing" in the memory. To store the data, we have to use persistent storages. Google provides are few services:
+In the previous branch, we created a few RESTful APIs but the data is stored in memory only. Everytime we updated the code, the `dev_appserver` will be restarted and the data are erased. This is good because it is very similar what happened to new deployment in GAE. When we deploy a new version to GAE, new instances are spawned with *nothing" in the memory. To store the data, we have to use persistent storages. Google provides are few services:
 
 1. Cloud Datastore
 2. Cloud SQL
