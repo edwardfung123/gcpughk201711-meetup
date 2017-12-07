@@ -1,6 +1,8 @@
 # Update in this branch
 
-In this branch, I will demo how to use the `urlfetch` library from Google. This library is usable in GAE only. AFAIK, This is the only way to make HTTP(s) requests from GAE instance. The document said it utilizes Google's internal HTTP request proxy. There are some restrictions such as you cannot change the `user-agent` in the request headers. But they are not so important to us in this demo. You can use other libraries such as `Requests`. The *details* are in [here](https://cloud.google.com/appengine/docs/standard/python/issue-requests)
+Previously, we use `urlfetch` library to requet the user's IG homepage. The process is quite tedious because we have to fetch a few things from IG first. However, those things are common to all users and they don't change most of the time. Besides, IG sometimes returns a 429 error to us. I think we can cache the common things and avoid extra requests to IG.
+
+In GAE, we can use the given shared `memcache` to store our data. You can also pay to use dedicated `memcache` for your app.
 
 ## Before we go to the changes...
 \* This based on the result of the previous step.
@@ -25,14 +27,11 @@ vendor.add('lib')
 
 ## Changes
 
-1. Add `util/ig.py` to handle IG stuffs...
-2. Add new API `/users/<username>/fetch` to trigger the fetch.
-
-IG really hates AppEngine. It will return HTTP 429 error sometimes.
+1. Use `memcache` in `util/ig.py` to store some values
 
 # Next step
 
-The next branch is `features/memcache-homepage`.
+The next branch is `features/add-gcs`.
 
 ---
 # Introduction
