@@ -1,14 +1,6 @@
 # Update in this branch
 
-In the last branch we created a few RESTful APIs but the data is stored in memory only. Everytime we updated the code, the `dev_appserver` will be restarted and the data are erased. This is good because it is very similar what happened to new deployment in GAE. When we deploy a new version to GAE, new instances are spawned with *nothing" in the memory. To store the data, we have to use persistent storages. Google provides are few services:
-
-1. Cloud Datastore
-2. Cloud SQL
-2. Cloud Storage
-3. BigQuery
-4. BigTable
-
-Since we might need to perform some searches and updates on the data, it is natural to use Datastore and Cloud SQL or BigTable. In this case, I will Cloud Datastore which is a document based NoSQL database. In fact, it was part of the AppEngine internal system until a few years ago. Google decided to sell it as a separate service. Now everyone can use it. AppEngine provides *simple* python libraries to access datastore namely `ndb`. `n` for new and there is an *old* `db` library. Google recommends to use `ndb` as it is easier to use. `ndb` is more or less an *ORM* library designed for Cloud Datastore only.
+In this branch, I will demo how to use the `urlfetch` library from Google. This library is usable in GAE only. AFAIK, This is the only way to make HTTP(s) requests from GAE instance. The document said it utilizes Google's internal HTTP request proxy. There are some restrictions such as you cannot change the `user-agent` in the request headers. But they are not so important to us in this demo. You can use other libraries such as `Requests`. The *details* are in [here](https://cloud.google.com/appengine/docs/standard/python/issue-requests)
 
 ## Before we go to the changes...
 \* This based on the result of the previous step.
@@ -33,13 +25,14 @@ vendor.add('lib')
 
 ## Changes
 
-1. Create new folder `models`
-2. Define IG user model in `models/user.py`
-3. Use the `user` model in the APIs
+1. Add `util/ig.py` to handle IG stuffs...
+2. Add new API `/users/<username>/fetch` to trigger the fetch.
+
+IG really hates AppEngine. It will return HTTP 429 error sometimes.
 
 # Next step
 
-The next branch is `features/fetch-from-ig`.
+The next branch is `features/memcache-homepage`.
 
 ---
 # Introduction
