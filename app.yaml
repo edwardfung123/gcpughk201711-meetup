@@ -2,8 +2,12 @@ runtime: python27
 api_version: 1
 threadsafe: true
 
+# The cache expiration time. Does not affect the dev_appserver. You have to
+# deploy it to GAE to see the effect. GAE will response with proper
+# Cache-Control and other Cache related header values according to this value.
 default_expiration: 2m
 
+# Comment the following lines to use jinja2.10 installed from pip
 #libraries:
 #- name: jinja2
 #  version: "2.6"
@@ -24,6 +28,9 @@ handlers:
 - url: /swaggerui
   static_dir: swaggerui
 
+# This tells AppEngine that any request like `/js/app.js` will be served
+# through the AppEngine static contents part. The request will not go to any
+# instance and served directly there. (no instance hour used.)
 - url: /js
   static_dir: static/js
 
