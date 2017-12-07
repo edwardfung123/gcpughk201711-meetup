@@ -1,14 +1,18 @@
 # Update in this branch
 
-In this branch, we are going to implement a few RESTful APIs so that we can get/set/delete an IG user in our system.  The APIs are implemented with `flask` instead of `webapp2`. I just want to show you that instead of using `webapp2`. You can use a more *popular* python framework.
+In the last branch we created a few RESTful APIs but the data is stored in memory only. Everytime we updated the code, the `dev_appserver` will be restarted and the data are erased. This is good because it is very similar what happened to new deployment in GAE. When we deploy a new version to GAE, new instances are spawned with *nothing" in the memory. To store the data, we have to use persistent storages. Google provides are few services:
 
-To document the APIs, `flask-restplus` is used to generate a very nice Swagger2.0 specifications and an web UI for trying the APIs.
+1. Cloud Datastore
+2. Cloud SQL
+2. Cloud Storage
+3. BigQuery
+4. BigTable
 
-Since this project is so _secret_. I decided to hide the documentation page with GAE's *authentication* feature. I added `login: admin` in `app.yaml` to enable this and prevent outsiders accessing the APIs doc.
+Since we might need to perform some searches and updates on the data, it is natural to use Datastore and Cloud SQL or BigTable. In this case, I will Cloud Datastore which is a document based NoSQL database. In fact, it was part of the AppEngine internal system until a few years ago. Google decided to sell it as a separate service. Now everyone can use it. AppEngine provides *simple* python libraries to access datastore namely `ndb`. `n` for new and there is an *old* `db` library. Google recommends to use `ndb` as it is easier to use. `ndb` is more or less an *ORM* library designed for Cloud Datastore only.
 
 ## Before we go to the changes...
 \* This based on the result of the previous step.
-It is expected that you are using `jinja2==2.10` which is installed using `pip`. `appengine_config.py` is properly configurated too.
+It is expected that you are using `jinja2==2.10` and `flask-restplus` which are installed using `pip`. `appengine_config.py` is properly configurated too.
 
 So if you just clone and switch to this branch, you have to:
 
@@ -29,20 +33,13 @@ vendor.add('lib')
 
 ## Changes
 
-1. We are going to implement a few *RESTful* APIs. The APIs include:
-    1. `GET /apis/users/` - Get a list of IG users
-	2. `POST /apis/users/` - Create an IG users
-	3. `GET /apis/users/<username>` - Get the details of an IG user
-	4. `DELETE /apis/users/<username>` - Remove the IG user
-2. Updated the `app.yaml` to add the routes
-3. Updated the `app.yaml` to disallow other users accessing the documentation page
-4. Updated `requirements.txt` so that we can use `flask` and `flask-restplus` to implement and document the APIs
-
-Please note that the data is not saved in the any persistent storage by design. In the next step, we will use datastore to store the IG users.
+1. Create new folder `models`
+2. Define IG user model in `models/user.py`
+3. Use the `user` model in the APIs
 
 # Next step
 
-The next branch is `features/add-ndb`.
+The next branch is `features/fetch-from-ig`.
 
 ---
 # Introduction
